@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.PopupMenu;
 
 import java.io.File;
 
@@ -36,70 +35,65 @@ public class MainActivity extends Activity {
     private void render() {
         LinearLayout page = Ui.column(this);
         page.setBackgroundColor(Ui.BG);
-        Ui.pad(page, this, 18);
+        Ui.pad(page, this, 16);
 
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
+        scroll.setClipToPadding(false);
         LinearLayout content = Ui.column(this);
 
-        LinearLayout top = new LinearLayout(this);
-        top.setGravity(Gravity.CENTER_VERTICAL);
-        top.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        LinearLayout top = Ui.row(this, View.LAYOUT_DIRECTION_RTL);
         LinearLayout brand = Ui.column(this);
-        brand.addView(Ui.text(this, "لوز بيلدر", 31, Ui.TEXT, true));
-        brand.addView(Ui.text(this, "استوديو تطوير وبناء المشاريع من هاتفك", 13, Ui.MUTED, false));
+        brand.addView(Ui.text(this, "لوز بيلدر", 31, Ui.TEXT, true), matchWidth());
+        brand.addView(Ui.text(this, "استوديو تطوير وبناء المشاريع من هاتفك", 13, Ui.MUTED, false), matchWidth());
         top.addView(brand, new LinearLayout.LayoutParams(0, -2, 1));
-        TextView version = Ui.pill(this, "نسخة 0.2", Ui.GREEN, 0xFF0C2824);
-        top.addView(version, new LinearLayout.LayoutParams(-2, -2));
+        top.addView(Ui.pill(this, "نسخة 0.3", Ui.GREEN, 0xFF0C2824), new LinearLayout.LayoutParams(-2, -2));
         content.addView(top, matchWidth());
         addGap(content, 20);
 
-        LinearLayout hero = Ui.card(this, Ui.PANEL, 22);
-        hero.addView(Ui.text(this, "مساحة عملك البرمجية", 20, Ui.TEXT, true));
+        LinearLayout hero = Ui.card(this, Ui.PANEL, 23);
+        hero.addView(Ui.text(this, "مساحة عملك البرمجية", 21, Ui.TEXT, true), matchWidth());
         addGap(hero, 7);
         hero.addView(Ui.text(this,
-            "استورد مشاريعك، رتّب ملفاتك، وابحث وعدّل الكود في محرر يدعم ألوان الصياغة وترقيم الأسطر.",
-            14, Ui.MUTED, false));
+            "استورد مشاريعك، رتّب ملفاتك، وافتح ملفات الشيفرة في محرر يدعم تلوين الصياغة وترقيم الأسطر.",
+            14, Ui.MUTED, false), matchWidth());
         content.addView(hero, matchWidth());
         addGap(content, 14);
 
-        LinearLayout actions = new LinearLayout(this);
-        actions.setOrientation(LinearLayout.HORIZONTAL);
-        actions.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+        LinearLayout actions = Ui.row(this, View.LAYOUT_DIRECTION_RTL);
         android.widget.Button zip = Ui.button(this, "استيراد ZIP", true);
         android.widget.Button folder = Ui.button(this, "استيراد مجلد", false);
-        actions.addView(zip, new LinearLayout.LayoutParams(0, -2, 1));
-        LinearLayout.LayoutParams fp = new LinearLayout.LayoutParams(0, -2, 1);
-        fp.setMargins(Ui.dp(this, 8), 0, 0, 0);
-        actions.addView(folder, fp);
+        actions.addView(zip, Ui.spacedWidth(this, 5));
+        actions.addView(folder, Ui.spacedWidth(this, 5));
         content.addView(actions, matchWidth());
 
         android.widget.Button create = Ui.button(this, "+ إنشاء مشروع جديد", false);
-        LinearLayout.LayoutParams cp = matchWidth(); cp.topMargin = Ui.dp(this, 8);
+        LinearLayout.LayoutParams cp = matchWidth();
+        cp.setMargins(Ui.dp(this, 5), Ui.dp(this, 9), Ui.dp(this, 5), 0);
         content.addView(create, cp);
         addGap(content, 22);
 
-        LinearLayout section = new LinearLayout(this);
-        section.setGravity(Gravity.CENTER_VERTICAL);
-        section.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        section.addView(Ui.text(this, "مشاريعي", 20, Ui.TEXT, true), new LinearLayout.LayoutParams(0, -2, 1));
-        section.addView(Ui.pill(this, "محفوظة على الهاتف", Ui.MUTED, Ui.PANEL2));
+        LinearLayout section = Ui.row(this, View.LAYOUT_DIRECTION_RTL);
+        section.addView(Ui.text(this, "مشاريعي", 21, Ui.TEXT, true), new LinearLayout.LayoutParams(0, -2, 1));
+        section.addView(Ui.pill(this, "محفوظة على الهاتف", Ui.MUTED, Ui.PANEL2), new LinearLayout.LayoutParams(-2, -2));
         content.addView(section, matchWidth());
 
         projectSearch = Ui.input(this, "ابحث باسم المشروع...");
-        LinearLayout.LayoutParams q = matchWidth(); q.topMargin = Ui.dp(this, 10);
+        LinearLayout.LayoutParams q = matchWidth();
+        q.setMargins(0, Ui.dp(this, 10), 0, 0);
         content.addView(projectSearch, q);
         projectsBox = Ui.column(this);
-        LinearLayout.LayoutParams pp = matchWidth(); pp.topMargin = Ui.dp(this, 12);
+        LinearLayout.LayoutParams pp = matchWidth();
+        pp.topMargin = Ui.dp(this, 12);
         content.addView(projectsBox, pp);
 
         addGap(content, 18);
         LinearLayout engine = Ui.card(this, 0xFF2B261F, 18);
-        engine.addView(Ui.text(this, "محرك البناء متعدد البيئات", 16, Ui.ORANGE, true));
+        engine.addView(Ui.text(this, "منظومة بناء متعددة اللغات", 16, Ui.ORANGE, true), matchWidth());
         addGap(engine, 6);
         engine.addView(Ui.text(this,
-            "المحرر وإدارة المشاريع جاهزان. تشغيل البناء المحلي يحتاج تثبيت بيئات اللغة وأدواتها (مثل JDK وAndroid SDK أو Node أو Python أو C/C++). لن يعرض التطبيق نسبة نجاح وهمية قبل تشغيل محرك حقيقي.",
-            13, 0xFFFFE0BD, false));
+            "نحلل المشروع كاملاً لاكتشاف Android وJava وKotlin وTypeScript وJavaScript وPython وC/C++ وغيرها. بناء APK مختلط يحتاج ربط كل مكوّن بأداة البناء المناسبة داخل Gradle؛ محرك التنفيذ المحلي ما زال مرحلة مستقلة قيد التطوير.",
+            13, 0xFFFFE0BD, false), matchWidth());
         content.addView(engine, matchWidth());
         addGap(content, 24);
 
@@ -126,37 +120,55 @@ public class MainActivity extends Activity {
         for (File f : ProjectStore.projects(this)) {
             if (!query.isEmpty() && !f.getName().toLowerCase().contains(query)) continue;
             shown++;
-            LinearLayout card = Ui.card(this, Ui.PANEL, 17);
+            LinearLayout card = Ui.card(this, Ui.PANEL, 18);
             card.setOrientation(LinearLayout.HORIZONTAL);
             card.setGravity(Gravity.CENTER_VERTICAL);
             card.setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+
+            GlassFileIconView icon = new GlassFileIconView(this, f.getName(), true);
+            LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(Ui.dp(this, 50), Ui.dp(this, 50));
+            iconParams.setMargins(0, 0, Ui.dp(this, 9), 0);
+            card.addView(icon, iconParams);
+
             LinearLayout info = Ui.column(this);
-            info.addView(Ui.text(this, f.getName(), 17, Ui.TEXT, true));
-            info.addView(Ui.text(this, countFiles(f) + " عنصر • " + ProjectStore.humanSize(ProjectStore.folderSize(f)), 12, Ui.MUTED, false));
-            card.addView(info, new LinearLayout.LayoutParams(0, -2, 1));
+            info.addView(Ui.text(this, f.getName(), 16, Ui.TEXT, true), matchWidth());
+            info.addView(Ui.text(this,
+                countFiles(f) + " عنصر  •  " + ProjectStore.humanSize(ProjectStore.folderSize(f)),
+                11, Ui.MUTED, false), matchWidth());
+            LinearLayout.LayoutParams infoParams = new LinearLayout.LayoutParams(0, -2, 1);
+            infoParams.setMargins(Ui.dp(this, 7), 0, Ui.dp(this, 7), 0);
+            card.addView(info, infoParams);
+
+            LinearLayout actionGroup = Ui.row(this, View.LAYOUT_DIRECTION_LTR);
             android.widget.Button open = Ui.button(this, "فتح المشروع", true);
-            card.addView(open, new LinearLayout.LayoutParams(-2, -2));
             TextView menu = Ui.iconButton(this, "⋮");
-            LinearLayout.LayoutParams mp = new LinearLayout.LayoutParams(Ui.dp(this, 42), Ui.dp(this, 46));
-            mp.setMargins(Ui.dp(this, 5), 0, 0, 0);
-            card.addView(menu, mp);
+            LinearLayout.LayoutParams openParams = new LinearLayout.LayoutParams(-2, Ui.dp(this, 46));
+            openParams.setMargins(Ui.dp(this, 4), 0, Ui.dp(this, 4), 0);
+            actionGroup.addView(open, openParams);
+            LinearLayout.LayoutParams menuParams = new LinearLayout.LayoutParams(Ui.dp(this, 42), Ui.dp(this, 46));
+            menuParams.setMargins(Ui.dp(this, 4), 0, Ui.dp(this, 4), 0);
+            actionGroup.addView(menu, menuParams);
+            card.addView(actionGroup, new LinearLayout.LayoutParams(-2, -2));
+
             open.setOnClickListener(v -> openProject(f));
-            info.setOnClickListener(v -> openProject(f));
             menu.setOnClickListener(v -> showProjectMenu(menu, f));
-            card.setOnClickListener(v -> openProject(f));
-            LinearLayout.LayoutParams row = matchWidth(); row.bottomMargin = Ui.dp(this, 9);
+            info.setOnClickListener(v -> openProject(f));
+            LinearLayout.LayoutParams row = matchWidth();
+            row.setMargins(0, 0, 0, Ui.dp(this, 10));
             projectsBox.addView(card, row);
         }
         if (shown == 0) {
-            String message = query.isEmpty() ? "لا توجد مشاريع بعد. استورد مشروعاً أو أنشئ واحداً للبدء." : "لا توجد مشاريع تطابق البحث.";
+            String message = query.isEmpty()
+                ? "لا توجد مشاريع بعد. استورد مشروعاً أو أنشئ واحداً للبدء."
+                : "لا توجد مشاريع تطابق البحث.";
             LinearLayout empty = Ui.card(this, Ui.PANEL, 15);
-            empty.addView(Ui.text(this, message, 13, Ui.MUTED, false));
+            empty.addView(Ui.text(this, message, 13, Ui.MUTED, false), matchWidth());
             projectsBox.addView(empty, matchWidth());
         }
     }
 
     private void showProjectMenu(View anchor, File project) {
-        PopupMenu menu = new PopupMenu(this, anchor);
+        android.widget.PopupMenu menu = new android.widget.PopupMenu(this, anchor);
         menu.getMenu().add("فتح المشروع");
         menu.getMenu().add("إعادة تسمية");
         menu.getMenu().add("حذف المشروع نهائياً");
@@ -173,7 +185,7 @@ public class MainActivity extends Activity {
     private void confirmDeleteProject(File project) {
         new AlertDialog.Builder(this)
             .setTitle("حذف المشروع نهائياً؟")
-            .setMessage("سيُحذف المشروع «" + project.getName() + "» وكل ملفاته من مساحة لوز بيلدر على الهاتف. لا يمكن التراجع عن هذا الإجراء.")
+            .setMessage("سيُحذف المشروع «" + project.getName() + "» وكل ملفاته ومجلداته من مساحة لوز بيلدر. لا يمكن التراجع عن هذا الإجراء.")
             .setNegativeButton("إلغاء", null)
             .setPositiveButton("حذف نهائياً", (d, w) -> {
                 ProjectStore.deleteRecursively(project);
@@ -197,7 +209,8 @@ public class MainActivity extends Activity {
     }
 
     private int countFiles(File f) {
-        File[] children = f.listFiles(); if (children == null) return 0;
+        File[] children = f.listFiles();
+        if (children == null) return 0;
         int count = children.length;
         for (File child : children) if (child.isDirectory()) count += countFiles(child);
         return count;
@@ -208,13 +221,17 @@ public class MainActivity extends Activity {
         new AlertDialog.Builder(this).setTitle("إنشاء مشروع جديد").setView(input)
             .setNegativeButton("إلغاء", null)
             .setPositiveButton("إنشاء", (d, w) -> {
-                try { File f = ProjectStore.create(this, input.getText().toString()); refreshProjects(); openProject(f); }
-                catch (Exception e) { toast(e.getMessage()); }
+                try {
+                    File f = ProjectStore.create(this, input.getText().toString());
+                    refreshProjects();
+                    openProject(f);
+                } catch (Exception e) { toast(e.getMessage()); }
             }).show();
     }
 
     private void askNameThenPickFolder() {
-        EditText input = Ui.input(this, "اسم المشروع المستورد"); input.setText("ImportedProject");
+        EditText input = Ui.input(this, "اسم المشروع المستورد");
+        input.setText("ImportedProject");
         new AlertDialog.Builder(this).setTitle("استيراد مجلد مشروع").setView(input)
             .setNegativeButton("إلغاء", null)
             .setPositiveButton("اختيار المجلد", (d, w) -> {
@@ -226,7 +243,8 @@ public class MainActivity extends Activity {
 
     private void pickZip() {
         Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        i.setType("application/zip"); i.addCategory(Intent.CATEGORY_OPENABLE);
+        i.setType("application/zip");
+        i.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(i, PICK_ZIP);
     }
 
@@ -243,16 +261,32 @@ public class MainActivity extends Activity {
                 getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 ProjectStore.importTree(this, uri, pendingName);
             }
-            refreshProjects(); toast("تم استيراد المشروع بنجاح");
+            refreshProjects();
+            toast("تم استيراد المشروع بنجاح");
         } catch (Exception e) { toast("فشل الاستيراد: " + e.getMessage()); }
     }
 
     private void openProject(File f) {
         Intent i = new Intent(this, ProjectActivity.class);
-        i.putExtra("project", f.getAbsolutePath()); startActivity(i);
+        i.putExtra("project", f.getAbsolutePath());
+        startActivity(i);
     }
-    private void toast(String s) { Toast.makeText(this, s == null ? "حدث خطأ" : s, Toast.LENGTH_LONG).show(); }
-    private void addGap(LinearLayout parent, int dp) { View v = new View(this); parent.addView(v, new LinearLayout.LayoutParams(1, Ui.dp(this, dp))); }
-    private LinearLayout.LayoutParams matchWidth() { return new LinearLayout.LayoutParams(-1, -2); }
-    @Override protected void onResume() { super.onResume(); if (projectsBox != null) refreshProjects(); }
+
+    private void addGap(LinearLayout parent, int dp) {
+        View v = new View(this);
+        parent.addView(v, new LinearLayout.LayoutParams(1, Ui.dp(this, dp)));
+    }
+
+    private void toast(String s) {
+        Toast.makeText(this, s == null ? "حدث خطأ" : s, Toast.LENGTH_LONG).show();
+    }
+
+    private LinearLayout.LayoutParams matchWidth() {
+        return new LinearLayout.LayoutParams(-1, -2);
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (projectsBox != null) refreshProjects();
+    }
 }
