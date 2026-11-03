@@ -2,15 +2,46 @@
 <resources>
 
     <style name="AppTheme"
-        parent="android:style/Theme.Material.Light.NoActionBar">
+        parent="android:style/Theme.Material.NoActionBar">
 
         <item name="android:fontFamily">sans</item>
         <item name="android:colorAccent">#69D5B4</item>
-        <item name="android:statusBarColor">#101820</item>
-        <item name="android:navigationBarColor">#101820</item>
+        <item name="android:colorBackground">#0D151C</item>
+        <item name="android:textColorPrimary">#F1F6F8</item>
+        <item name="android:textColorSecondary">#9FB2BD</item>
+
+        <item name="android:statusBarColor">#0D151C</item>
+        <item name="android:navigationBarColor">#0D151C</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowActionModeOverlay">true</item>
-        <item name="android:windowBackground">#101820</item>
+        <item name="android:windowBackground">#0D151C</item>
+
+        <item name="android:alertDialogTheme">@style/AppDialogTheme</item>
+        <item name="android:popupMenuStyle">@style/AppPopupMenu</item>
+
+    </style>
+
+    <style name="AppDialogTheme"
+        parent="android:style/Theme.Material.Dialog.Alert">
+
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#69D5B4</item>
+        <item name="android:colorBackground">#172630</item>
+        <item name="android:textColorPrimary">#F1F6F8</item>
+        <item name="android:textColorSecondary">#B2C2CA</item>
+
+        <item name="android:windowBackground">@drawable/dialog_window_background</item>
+        <item name="android:backgroundDimAmount">0.68</item>
+
+        <item name="android:windowMinWidthMajor">88%</item>
+        <item name="android:windowMinWidthMinor">88%</item>
+
+    </style>
+
+    <style name="AppPopupMenu"
+        parent="@android:style/Widget.Material.PopupMenu">
+
+        <item name="android:popupBackground">@drawable/dialog_window_background</item>
 
     </style>
 
