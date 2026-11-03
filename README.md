@@ -1,8 +1,8 @@
 
-# Luz Builder
+# Luz Builder 0.3.0
 
-Android project workspace and source editor, release 0.2.0.
+Mobile Android project workspace with a file explorer, basic source editor, glass-style file/folder icons, improved spacing, and mixed-language project analysis.
 
-See `README_AR.md` for Arabic setup notes and `BUILD_ENGINE_ROADMAP.md` for the multilingual build-engine implementation plan.
+See `README_AR.md` and `docs/MIXED_ANDROID_PROJECT_GUIDE.md`.
 
-This release improves project management and editing. The local multi-toolchain build runtime is not included yet; the app detects common project ecosystems and reports required tools without fabricating a build result or progress percentage.
+**Build-engine status:** The current app analyzes multiple ecosystems and explains how their outputs should be integrated into one Android Gradle APK. It does not yet ship an on-device JDK/Gradle/Android SDK/NDK/Node/Python toolchain or execute local builds of imported projects. GitHub Actions builds Luz Builder itself only.
