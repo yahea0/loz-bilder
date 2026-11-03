@@ -1,40 +1,38 @@
 
-# خارطة محرك البناء متعدد اللغات — Luz Builder 0.2.0
+# خارطة طريق محرك البناء — Luz Builder 0.3.0
 
-## ما هو موجود في 0.2.0
-- محرر نصوص برمجية مع ترقيم أسطر، تمييز ألوان أساسي حسب امتداد الملف، بحث واستبدال، تراجع/إعادة، تعليق/إلغاء تعليق، مسافة بادئة، انتقال إلى سطر.
-- حفظ آمن نسبياً عبر ملف مؤقت، ثم إغلاق المحرر والعودة للمشروع عند نجاح الحفظ.
-- تأكيد قبل حذف مشروع كامل أو عنصر من داخله.
-- كشف أولي لنوع المشروع من ملفات إعداد معروفة.
+## المرحلة الحالية
+- تحسين توزيع الأزرار ومنع تلامس عناصر الصفوف.
+- إضافة أيقونات زجاجية للملفات والمجلدات.
+- تحليل عودي متعدد اللغات بدلاً من إيقاف الفحص عند أول ملف إعداد.
+- تمييز مشروع Android/Gradle كهدف APK حتى عند وجود حزم JavaScript أو Python أو C/C++ معه.
+- عرض متطلبات الربط لكل مكوّن مكتشف.
 
-## حقيقة البناء متعدد اللغات
-لا يوجد Compiler واحد قادر على بناء كل لغات البرمجة. يحتاج كل نوع مشروع إلى سلسلة أدوات خاصة به، كما أن إنشاء APK من Python أو JavaScript أو C++ ليس مجرد تشغيل مترجم؛ بل يحتاج طبقة تغليف/منصة Android مناسبة.
+## هدف المشروع المختلط
+المستخدم يستورد مستودعاً واحداً قد يحتوي على Java وKotlin وTypeScript وJavaScript وPython وC/C++ وغيرها. إذا كان المشروع يملك Android app module، يكون Gradle هو منسق البناء النهائي. كل لغة تُدمج بالطريقة التي تناسبها، وليس عن طريق محاولة تمرير جميع الملفات إلى مترجم واحد.
 
-## محولات البناء التي ينبغي دعمها
-| المحول | مؤشرات المشروع | الأدوات المطلوبة |
-|---|---|---|
-| Android / Gradle | settings.gradle, build.gradle | JDK, Gradle, Android SDK, Build Tools |
-| Java / Maven | pom.xml | JDK, Maven |
-| Node / TypeScript | package.json | Node.js, npm/pnpm/yarn |
-| Python | pyproject.toml, requirements.txt | Python, pip, build backend |
-| C / C++ | CMakeLists.txt, Makefile | Clang/GCC, CMake/Ninja/Make؛ وNDK لهدف Android |
-| Rust | Cargo.toml | Rustup, Cargo, target standard library |
-| Go | go.mod | Go toolchain |
-| Flutter / Dart | pubspec.yaml | Flutter SDK, Dart, Android SDK عند APK |
-| .NET | *.csproj, *.sln | .NET SDK |
-| PHP / Ruby | composer.json / Gemfile | PHP+Composer / Ruby+Bundler |
+## محولات الدمج
+- Java/Kotlin: Android Gradle Plugin وKotlin Gradle Plugin.
+- TypeScript/JavaScript: Node.js task أو React Native/حزمة WebView، ويجب توصيل ناتج bundling إلى Gradle assets أو source sets.
+- Python: Chaquopy أو runtime Android متوافق، مع ضبط ABI والاعتماديات.
+- C/C++: NDK وCMake أو ndk-build وexternalNativeBuild.
+- Rust/Go: cross-compile إلى Android ABI ثم ربط المكتبات عبر JNI/FFI.
+- .NET: مسار .NET for Android مستقل، لا يُعامل كملف مصدر إضافي داخل AGP العادي.
+- PHP/Ruby: عادةً خدمات backend، إلا إذا أضيف runtime مضمّن صراحةً.
 
-## نسب التقدم الحقيقية
-- تنزيل حزمة أدوات: يمكن حساب النسبة بدقة من bytesDownloaded / contentLength عند وجود Content-Length موثوق.
-- بناء Gradle/Maven: يجب ربط أحداث المهام من أداة البناء أو تحليل سجل صريح؛ سطر BUILD SUCCESSFUL وحده لا يعطي نسبة تدريجية.
-- الأدوات التي لا توفر أحداث تقدم: يعرض التطبيق شريطاً غير محدد (indeterminate) وسجل المخرجات، ولا يخترع نسبة 11% أو 80%.
+## المراحل المتبقية لمحرك محلي حقيقي
+1. ToolchainManager لتنزيل JDK وGradle وAndroid SDK/Build Tools وNDK/CMake وNode وحزم اللغات بحسب الحاجة، مع SHA-256 ومساحة تخزين ومتابعة التنزيل.
+2. RuntimeHost متوافق مع Android/ARM64 لتشغيل الأدوات المحلية داخل مساحة التطبيق؛ لا يكفي استدعاء Gradle من Activity.
+3. BuildAdapters تربط كل مكوّن بمهامه وتكشف الاعتماديات الناقصة قبل البناء.
+4. BuildSession لتشغيل العملية وعرض stdout/stderr والإلغاء ورمز الخروج.
+5. ProgressProvider يعرض نسبة فقط عندما تتوفر وحدة قياس موثوقة؛ وإلا يعرض شريطاً غير محدد وسجل البناء.
+6. ArtifactManager لاكتشاف APK والتحقق من وجوده وتقديمه لمثبت Android عبر content URI وإدارة توقيع release.
 
-## المراحل التالية قبل ادعاء أن البناء يعمل
-1. ToolchainManager لتنزيل نسخ ARM64 محددة والتحقق من SHA-256.
-2. بيئة Linux userland وآلية تشغيل متوافقة مع Android، مع اختبارها على ARM64.
-3. BuildAdapter مستقل لكل نظام بناء، مع إظهار الأمر والبيئة والاعتماديات.
-4. بث stdout/stderr وإدارة إلغاء البناء وحالة العملية.
-5. ProgressProvider لكل Adapter؛ وإلا يبقى العرض غير محدد.
-6. اكتشاف المخرجات وتوقيع APK/تسليمه إلى مثبت Android.
+## الأمان
+- لا تشغّل ملفات Gradle أو npm أو pip أو shell تلقائياً عند استيراد ZIP.
+- اطلب موافقة المستخدم قبل تنفيذ سكربتات مشروع غير موثوقة.
+- تحقق من هاش حزم الأدوات، وتجنب المسارات الخارجة عن مجلد الاستخراج، وحدد مساحة الملفات المؤقتة.
+- لا تخزن كلمات مرور keystore في ملفات نصية أو سجلات البناء.
 
-هذه النسخة لا تتضمن بعد محرك تنفيذ محلياً؛ زر البناء يعرض تشخيصاً صريحاً ولا يوهم المستخدم بأن عملية بناء بدأت.
+## حدود 0.3.0
+المحلل والواجهة يكتشفان المكونات ويقدمان خطة دمج. لم تُضمّن بعد أدوات البناء، أو runtime محلي، أو محولات تنفيذ، أو بناء APK للمشاريع المستوردة. GitHub Actions يبني APK الخاص بلوز بيلدر نفسه فقط.
