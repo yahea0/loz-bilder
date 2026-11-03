@@ -1,8 +1,29 @@
 
-# Luz Builder 0.3.0
+# لوز بيلدر 0.3.0
 
-Mobile Android project workspace with a file explorer, basic source editor, glass-style file/folder icons, improved spacing, and mixed-language project analysis.
+استوديو Android لإدارة المشاريع وفتح الملفات النصية وتحريرها. الإصدار 0.3.0 يحسّن المسافات في صفوف الأزرار، بطاقات المشاريع والملفات، ويضيف أيقونات ملفات ومجلدات زجاجية، كما يحلل المشاريع المختلطة ويعرض اللغات والمكوّنات المكتشفة.
 
-See `README_AR.md` and `docs/MIXED_ANDROID_PROJECT_GUIDE.md`.
+## الموجود في هذا الإصدار
+- استيراد ZIP أو مجلد وتخزين نسخة محلية خاصة بالتطبيق.
+- مستكشف ملفات مع البحث والتنقل وإنشاء الملفات والمجلدات وإعادة التسمية والحذف بعد التأكيد.
+- بطاقات زجاجية للأيقونات وتحسين تباعد الأزرار.
+- محرر نصوص مع ترقيم أسطر وأدوات تحرير وتلوين صياغة أساسي.
+- فحص عودي محدود الحجم للمشروع لاكتشاف Java وKotlin وTypeScript وJavaScript وPython وC/C++ وRust وGo وC# وPHP وRuby وDart وغيرها.
+- أولوية لاكتشاف مشروع Android/Gradle حتى عند وجود ملفات لغات أخرى في المشروع.
+- تقرير يوضح كيفية دمج المكونات المختلطة داخل APK.
 
-**Build-engine status:** The current app analyzes multiple ecosystems and explains how their outputs should be integrated into one Android Gradle APK. It does not yet ship an on-device JDK/Gradle/Android SDK/NDK/Node/Python toolchain or execute local builds of imported projects. GitHub Actions builds Luz Builder itself only.
+## ما لا يزال غير منفذ
+هذا الإصدار لا يحتوي بعد على JDK/Gradle/Android SDK/NDK/Node/Python toolchains مدمجة داخل التطبيق ولا يشغّل عملية بناء محلية. شاشة التحليل لا تدّعي أن التجميع بدأ ولا تعرض نسباً وهمية. ملف GitHub Actions يبني تطبيق لوز بيلدر نفسه على GitHub، وليس مشاريع المستخدم محلياً.
+
+## مشاريع Android متعددة اللغات
+راجع `docs/MIXED_ANDROID_PROJECT_GUIDE.md`. باختصار:
+- Java/Kotlin: Android Gradle Plugin.
+- C/C++: Android NDK وCMake أو ndk-build.
+- Python: تكامل Android مثل Chaquopy.
+- TypeScript/JavaScript: Node.js task أو React Native/حل WebView، ثم ربط ناتج التجميع بمهام Gradle.
+- Rust/Go: cross-compile إلى مكتبات Android لكل ABI ثم الربط عبر JNI أو واجهة مناسبة.
+
+لا تتحول جميع ملفات المصدر تلقائياً إلى APK بمجرد اكتشاف امتداداتها. يجب أن يحدد المشروع طريقة دمج كل مكوّن.
+
+## البناء التجريبي عبر GitHub Actions
+يتطلب JDK 17 وGradle 8.9 وAndroid SDK Platform 35 وBuild Tools 35.0.0. افتح Actions وشغّل `Build Luz Builder APK` ثم نزّل Artifact.
