@@ -1,36 +1,25 @@
-# Local Build Engine — Design Notes
 
-## Goal
+# Luz Builder — Local Build Engine Design
 
-Run real Gradle Android builds on-device without requiring the user to install or open Termux. Toolchain payloads are installed and managed by Luz Builder itself.
+The product target is an extensible on-device build studio. It is not technically correct to promise a universal compiler: every ecosystem has its own toolchain and packaging workflow.
 
-## Proposed execution model
+## Architecture target
+- ToolchainManager: download/version/cache signed or hash-pinned ARM64 tool bundles.
+- RuntimeEnvironment: launch compatible Linux userland tools from app-private storage.
+- BuildAdapter: one adapter per ecosystem (Gradle, Maven, Node, Python, CMake/Make, Cargo, Go, Flutter, .NET, PHP, Ruby).
+- BuildSession: cancellable process, stdout/stderr streaming, exit status, artifact discovery.
+- ProgressProvider: report only real task/byte progress; use indeterminate progress where the ecosystem does not expose a reliable percentage.
+- ArtifactInstaller: hand APK/AAB output to Android's package installer using a content URI.
 
-- A dedicated BuildEnvironmentManager owns the app-private toolchain directory.
-- The first-run setup downloads a versioned ARM64 rootfs/toolchain archive over HTTPS.
-- The app verifies the archive digest/signature before extraction.
-- A small native execution bridge launches the rootfs environment using an Android-compatible PRoot build.
-- The command runs from the imported project's root, for example:
-  ./gradlew --offline assembleDebug
-  when the wrapper and dependencies are cached, or:
-  gradle --no-daemon assembleDebug
-  when the project uses the provisioned Gradle distribution.
-- Standard output and error are streamed to a build console; the process exit code determines success or failure.
-- The output APK is discovered under the module's build/outputs/apk/ directory and passed to Android's package installer using a content:// URI.
+## Android constraints
+- Desktop Linux executables are not automatically executable on Android. A tested Android-compatible runtime/PRoot bridge and ARM64 toolchain packaging are required.
+- Android APKs require Android SDK build tools and often NDK; a generic language compiler does not automatically produce an APK.
+- Native toolchains and SDKs are large. The base APK should stay small; install toolchains inside the app on demand.
+- Offline builds only work after all required plugins and dependencies are cached.
+- The app must not report build success or a percentage unless a real process/event source provides it.
 
-## Important constraints
+## Implemented in 0.2.0
+Project management, import/export, syntax-aware text editing, basic language highlighting, line numbers, search/replace, undo/redo, comment/indent helpers, save-and-return, and project deletion confirmation. Build ecosystem detection is a preliminary heuristic only.
 
-1. A full JDK + Gradle + Android SDK toolchain is large. The app's initial install should stay small; toolchain setup is a separate one-time in-app download.
-2. Gradle is not a normal Android app library. The build must run in a compatible Linux userland with Android-specific binaries, not by calling an ordinary desktop Gradle executable directly from the app process.
-3. Projects can use different Android Gradle Plugin, Gradle, Kotlin, NDK, and Maven dependency versions. Compatibility detection and clear diagnostics are required.
-4. Offline builds work only after the needed plugins and dependencies have been cached. A project with new external dependencies still needs network access once.
-5. The native launcher and toolchain packaging must be tested on the actual phone architecture and Android version. This source prototype has not yet done that.
-6. Signing configuration must be stored securely; passwords should never appear in build logs.
-
-## Build stages
-
-- Stage A: project importer, local file explorer, text editor, ZIP export (implemented in 0.1.0).
-- Stage B: toolchain installer and integrity checks.
-- Stage C: native execution bridge and build log streaming.
-- Stage D: APK discovery, install/update handoff, build variants.
-- Stage E: keystore management, incremental build tuning, dependency diagnostics.
+## Not implemented yet
+The actual local toolchain download/runtime/adapter execution, live build progress from a running process, APK artifact discovery/signing, and install/update pipeline.
